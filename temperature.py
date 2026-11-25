@@ -39,11 +39,11 @@ class Temperature():
 
     def __repr__(self) -> str:
          '''Representation of class.'''
-         return f"Temperature({self._temp:.1f}, {self._unit})"
+         return f"Temperature({self._temp!r}, {self._unit!r})"
 
     def __str__(self) -> str:
          '''Prints Temperature in a human readable way.'''
-         return f"Temperature is {self._temp:.1f} {self._unit}"
+         return f"Temperature is {self._temp} {self._unit}"
 
     def __eq__(self, other) -> bool:
          '''Check for equality.'''
