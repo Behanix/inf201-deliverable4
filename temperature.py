@@ -7,8 +7,9 @@ class Temperature():
         self._unit = unit.upper()
         if self._unit not in self.ACCEPTED_UNITS:
              raise ValueError("Unit must be K, C or F.")
-        if self.to_kelvin() < -1e-9:
-             raise ValueError("Temperature must be above absolute zero.")    
+        if self.to_kelvin() < 0:
+             raise ValueError("Temperature must be above absolute zero.")
+    
 
     def to_celsius(self) -> float:
         '''Converts to celsius.'''
@@ -92,11 +93,13 @@ class Temperature():
          a = self.to_celsius()
          b = other.to_celsius()
          return a >= b
-         
-@property
-def temp(self) -> float:
-    return self._temp
 
-@property
-def unit(self) -> str:
-    return self._unit
+    @property
+    def temp(self) -> float:
+        '''Read-only access to the temperature value.'''
+        return self._temp
+
+    @property
+    def unit(self) -> str:
+        '''Read-only access to the unit.'''
+        return self._unit
