@@ -6,10 +6,10 @@ import pytest
 # Default values
 def test_default_unit():
     t = Temperature()
-    assert t.temp == 0.00
+    assert t.temp == 273.15
     assert t.unit == "K"
-    assert Temperature(0.0, "K") == t
-    assert Temperature(0.0, "C") != t
+    assert Temperature(273.15, "K") == t
+    assert Temperature(273.15, "C") != t
 
 
 # Case-insensitive units
@@ -109,9 +109,10 @@ def test_cross_unit():
     assert Temperature(0.0, "F") < Temperature(273.15, "K")
     assert Temperature(-273.15, "C") <= Temperature(-459.67, "F")
     assert Temperature(300.15, "K") <= Temperature(90, "F")
+    assert Temperature(0.0, "K") >= Temperature(-273.15, "C")
 
 # Formatting
 def test_formatting():
     t = Temperature()
-    assert print(t) == print(f"Temperature is 0.0, K")
-    assert eval(repr(t)) == t
+    assert str(t) == "Temperature is 273.15 K"
+    assert repr(t) == "Temperature(273.15, 'K')"
