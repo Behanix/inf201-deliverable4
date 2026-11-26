@@ -1,14 +1,14 @@
-class Temperature():
+class Temperature:
     '''Converts temperatures into Kelvin, Celsius, or Fahrenheit.'''
 
     ACCEPTED_UNITS = ("K", "C", "F")
-    def __init__(self, temp: float = 0.0, unit: str = "K") -> None:
+    def __init__(self, temp: float = 273.15, unit: str = "K") -> None:
         self._temp = temp
         self._unit = unit.upper()
         if self._unit not in self.ACCEPTED_UNITS:
-             raise ValueError("Unit must be K, C or F.")
+             raise ValueError("Unit must be K, C, or F.")
         if self.to_kelvin() < 0:
-             raise ValueError("Temperature must be above absolute zero.")
+             raise ValueError("Temperature cannot be lower than absolute zero.")
     
 
     def to_celsius(self) -> float:
@@ -92,7 +92,7 @@ class Temperature():
               return NotImplemented
          a = self.to_celsius()
          b = other.to_celsius()
-         return a >= b
+         return abs(a - b) > 1e-9 or a > b
 
     @property
     def temp(self) -> float:
@@ -103,3 +103,5 @@ class Temperature():
     def unit(self) -> str:
         '''Read-only access to the unit.'''
         return self._unit
+
+if __name__ == "__main__":
