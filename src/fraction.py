@@ -1,12 +1,13 @@
 from functools import total_ordering
 from typing import Self
 
+
 @total_ordering
 class Fraction:
     '''Represents a fraction with integer numerator and positive integer denominator.'''
 
     TOLERANCE = 1e-9
-    
+
     def __init__(self, numerator: int, denominator: int) -> None:
         '''Creates a Fraction.
         Args:
@@ -19,33 +20,32 @@ class Fraction:
         '''
         if not isinstance(numerator, int) or not isinstance(denominator, int):
             raise TypeError("Numerator and denominator must be integers.")
-    
+
         if denominator <= 0:
             raise ValueError("Denominator must be positive.")
 
         self._numerator = numerator
         self._denominator = denominator
 
-
     def calc(self) -> float:
         """Return the value of the fraction as a float."""
         return self.numerator / self.denominator
 
-   # Comparision methods    
-    def __eq__(self, other) -> bool:
+    # Comparision methods
+    def __eq__(self, other: object) -> bool:
         """Return True if both fractions have the same value."""
         if not isinstance(other, Fraction):
             return NotImplemented
         return abs(self.calc() - other.calc()) < self.TOLERANCE
 
-    def __lt__(self, other) -> bool:
+    def __lt__(self, other: object) -> bool:
         """Return True if this fraction is smaller than other."""
         if not isinstance(other, Fraction):
             return NotImplemented
         return self.calc() < other.calc()
 
     # Arithmetic operators methods
-    def __add__(self, other) -> Self:
+    def __add__(self, other: object) -> Self:
         """Return the sum of two fractions."""
         if not isinstance(other, Fraction):
             return NotImplemented
@@ -53,7 +53,7 @@ class Fraction:
         new_den = (self.denominator * other.denominator)
         return type(self)(new_num, new_den)
 
-    def __sub__(self, other) -> Self:
+    def __sub__(self, other: object) -> Self:
         """Return the difference of two fractions."""
         if not isinstance(other, Fraction):
             return NotImplemented
@@ -61,7 +61,7 @@ class Fraction:
         new_den = (self.denominator * other.denominator)
         return type(self)(new_num, new_den)
 
-    def __mul__(self, other) -> Self:
+    def __mul__(self, other: object) -> Self:
         """Return the product of two fractions."""
         if not isinstance(other, Fraction):
             return NotImplemented
@@ -69,9 +69,9 @@ class Fraction:
         new_den = (self.denominator * other.denominator)
         return type(self)(new_num, new_den)
 
-    def __truediv__(self, other) -> Self:
+    def __truediv__(self, other: object) -> Self:
         """Return the quotient of two fractions.
-        
+
         Raises:
             ZeroDivisionError: If other is equal to zero.
         """
@@ -80,17 +80,17 @@ class Fraction:
 
         if other.numerator == 0:
             raise ZeroDivisionError("Cannot divide by a fraction equal to zero.")
-        
+
         new_num = self.numerator * other.denominator
         new_den = self.denominator * other.numerator
-        
+
         if new_den < 0:
             new_num = -new_num
             new_den = -new_den
         return type(self)(new_num, new_den)
 
     # Other methods
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return the official string representation of the object."""
         return f"Fraction({self.numerator}, {self.denominator})"
 
@@ -98,13 +98,12 @@ class Fraction:
         """Return a human-readable string representation."""
         return f"({self.numerator}/{self.denominator})"
 
-    @property 
+    @property
     def numerator(self) -> int:
         '''Read-only access to numerator.'''
         return self._numerator
 
-    @property 
+    @property
     def denominator(self) -> int:
         '''Read-only access to denominator.'''
         return self._denominator
-
