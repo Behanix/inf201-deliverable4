@@ -56,7 +56,7 @@ def test_below_absolute_zero(value: float, unit: str) -> None:
         Temperature(value, unit)
 
 
-# 3 Conversion accuracy across reference points
+# 3. Conversion accuracy across reference points
 def test_conversion_accuracy() -> None:
     # Absolute zero
     assert Temperature(-273.15, "C") == Temperature(0.0, "K") == Temperature(-459.67, "F")
@@ -80,7 +80,7 @@ def test_round_trip() -> None:
     assert c_original == c_new
 
 
-# Cross unit comparison
+# 5. Cross unit comparison
 def test_cross_unit() -> None:
     assert Temperature(0.0, "C") >= Temperature(273.15, "K")
     assert Temperature(0.1, "C") > Temperature(273.15, "K")
@@ -90,7 +90,7 @@ def test_cross_unit() -> None:
     assert Temperature(0.0, "K") >= Temperature(-273.15, "C")
 
 
-# Formatting
+# 6. Formatting
 def test_formatting() -> None:
     t = Temperature()
     assert str(t) == "Temperature is 273.15 K"

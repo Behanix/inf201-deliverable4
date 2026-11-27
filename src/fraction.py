@@ -1,3 +1,5 @@
+"""Fraction class with arithmetic operations and comparison."""
+
 from functools import total_ordering
 from typing import Self
 
@@ -5,8 +7,6 @@ from typing import Self
 @total_ordering
 class Fraction:
     '''Represents a fraction with integer numerator and positive integer denominator.'''
-
-    TOLERANCE = 1e-9
 
     def __init__(self, numerator: int, denominator: int) -> None:
         '''Creates a Fraction.
@@ -27,24 +27,25 @@ class Fraction:
         self._numerator = numerator
         self._denominator = denominator
 
-    def calc(self) -> float:
+    def to_float(self) -> float:
         """Return the value of the fraction as a float."""
         return self.numerator / self.denominator
 
-    # Comparision methods
+    # Comparison methods
     def __eq__(self, other: object) -> bool:
         """Return True if both fractions have the same value."""
         if not isinstance(other, Fraction):
             return NotImplemented
-        return abs(self.calc() - other.calc()) < self.TOLERANCE
+        return self.numerator * other.denominator == other.numerator * self.denominator
+
 
     def __lt__(self, other: object) -> bool:
         """Return True if this fraction is smaller than other."""
         if not isinstance(other, Fraction):
             return NotImplemented
-        return self.calc() < other.calc()
+        return self.numerator * other.denominator < other.numerator * self.denominator
 
-    # Arithmetic operators methods
+    # Arithmetic methods
     def __add__(self, other: object) -> Self:
         """Return the sum of two fractions."""
         if not isinstance(other, Fraction):
@@ -92,7 +93,7 @@ class Fraction:
     # Other methods
     def __repr__(self) -> str:
         """Return the official string representation of the object."""
-        return f"Fraction({self.numerator}, {self.denominator})"
+        return f"{type(self).__name__}({self.numerator}, {self.denominator})"
 
     def __str__(self) -> str:
         """Return a human-readable string representation."""
