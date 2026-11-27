@@ -1,107 +1,107 @@
+"""Temperature class with unit conversion and comparison."""
+
+from functools import total_ordering
+from typing import Self
+
+
+@total_ordering
 class Temperature:
-    '''Converts temperatures into Kelvin, Celsius, or Fahrenheit.'''
+    """Represents a temperature in Kelvin, Celsius, or Fahrenheit."""
 
-    ACCEPTED_UNITS = ("K", "C", "F")
-    def __init__(self, temp: float = 273.15, unit: str = "K") -> None:
-        self._temp = temp
-        self._unit = unit.upper()
-        if self._unit not in self.ACCEPTED_UNITS:
-             raise ValueError("Unit must be K, C, or F.")
+    ACCEPTED_UNITS = frozenset({"K", "C", "F"})
+    KELVIN_OFFSET = 273.15
+    TOLERANCE = 1e-9
+
+    def __init__(self, value: float = KELVIN_OFFSET, unit: str = "K") -> None:
+        """
+        Initialise the temperature.
+
+        Args:
+            value: The temperature value. Defaults to 273.15.
+            unit: The unit of the value: "K", "C", or "F" (case-insensitive).
+                Defaults to "K".
+
+        Raises:
+            ValueError: If the unit is not "K", "C", or "F", or if the
+                temperature is below absolute zero.
+        """
+        self._value = value
+        self._unit = self._process_unit(unit)
+
         if self.to_kelvin() < 0:
-             raise ValueError("Temperature cannot be lower than absolute zero.")
-    
-
-    def to_celsius(self) -> float:
-        '''Converts to celsius.'''
-        if self._unit == "K":
-            return self._temp - 273.15
-        if self._unit == "F":
-            return (self._temp - 32) * 5 / 9
-        return self._temp
-
-    def to_kelvin(self) -> float:
-         '''Converts to kelvin.'''
-         return self.to_celsius() + 273.15
-
-    def to_fahrenheit(self) -> float:
-         '''Converts to Fahrenheit.'''
-         return self.to_celsius() * 9 / 5 + 32
-
-    def convert_to(self, target_unit: str) -> Temperature:
-         '''Converts Temperature object to another unit.'''
-         target_unit = target_unit.upper()
-         if target_unit not in self.ACCEPTED_UNITS:
-              raise ValueError("Unit must be K, C, or F.")
-         new_temp = self.to_celsius() if target_unit == "C" else \
-                    self.to_fahrenheit() if target_unit == "F" else \
-                    self.to_kelvin()
-         return Temperature(new_temp, target_unit)
-
-    def __repr__(self) -> str:
-         '''Representation of class.'''
-         return f"Temperature({self._temp}, {self._unit})"
-
-    def __str__(self) -> str:
-         '''Prints Temperature in a human readable way.'''
-         return f"Temperature is {self._temp} {self._unit}"
-
-    def __eq__(self, other) -> bool:
-         '''Check for equality.'''
-         if not isinstance(other, Temperature):
-              return NotImplemented
-         a = self.to_celsius()
-         b = other.to_celsius()
-         return abs(a - b) < 1e-9
-
-# Don't need because __eq__ already in place. 
-#     def __ne__(self, other) -> bool:
-#          '''Check for equality.'''
-#          if not isinstance(other, Temperature):
-#               return NotImplemented
-#          a = self.to_celsius()
-#          b = other.to_celsius()
-#          return abs(a - b) > 1e-9
-
-    def __lt__(self, other) -> bool:
-         '''Check for less than.'''
-         if not isinstance(other, Temperature):
-              return NotImplemented
-         a = self.to_celsius()
-         b = other.to_celsius()
-         return a < b
-
-    def __le__(self, other) -> bool:
-         '''Check of less than or equal to.'''
-         if not isinstance(other, Temperature):
-              return NotImplemented
-         a = self.to_celsius()
-         b = other.to_celsius()
-         return abs(a - b) < 1e-9 or a < b
-
-    def __gt__(self, other) -> bool:
-         '''Check for greater than.'''
-         if not isinstance(other, Temperature):
-              return NotImplemented
-         a = self.to_celsius()
-         b = other.to_celsius()
-         return a > b
-
-    def __ge__(self, other) -> bool:
-         '''Check for greater than or equal to.'''
-         if not isinstance(other, Temperature):
-              return NotImplemented
-         a = self.to_celsius()
-         b = other.to_celsius()
-         return abs(a - b) > 1e-9 or a > b
+            raise ValueError("Temperature cannot be lower than absolute zero.")
 
     @property
-    def temp(self) -> float:
-        '''Read-only access to the temperature value.'''
-        return self._temp
+    def value(self) -> float:
+        """The temperature value (read-only)."""
+        return self._value
 
     @property
     def unit(self) -> str:
-        '''Read-only access to the unit.'''
+        """The temperature unit (read-only)."""
         return self._unit
 
-if __name__ == "__main__":
+    def to_celsius(self) -> float:
+        """Return the temperature value converted to Celsius."""
+        if self._unit == "K":
+            return self._value - self.KELVIN_OFFSET
+        if self._unit == "F":
+            return (self._value - 32) * 5 / 9
+        return self._value
+
+    def to_kelvin(self) -> float:
+        """Return the temperature value converted to Kelvin."""
+        if self._unit == "K":
+            return self._value
+        return self.to_celsius() + self.KELVIN_OFFSET
+
+    def to_fahrenheit(self) -> float:
+        """Return the temperature value converted to Fahrenheit."""
+        if self._unit == "F":
+            return self._value
+        return self.to_celsius() * 9 / 5 + 32
+
+    def convert_to(self, target_unit: str) -> Self:
+        """Convert the temperature to a chosen unit and return it as a new object."""
+        target_unit = self._process_unit(target_unit)
+
+        if target_unit == "C":
+            value = self.to_celsius()
+        elif target_unit == "K":
+            value = self.to_kelvin()
+        else:
+            value = self.to_fahrenheit()
+
+        return type(self)(value, target_unit)
+
+    def __repr__(self) -> str:
+        """Return the developer representation of the temperature."""
+        return f"{type(self).__name__}({self._value!r}, {self._unit!r})"
+
+    def __str__(self) -> str:
+        """Return the temperature in a human-readable way."""
+        return f"Temperature is {self._value} {self._unit}"
+
+    def __eq__(self, other: object) -> bool:
+        """Check for equality."""
+        if not isinstance(other, Temperature):
+            return NotImplemented
+
+        return abs(self.to_celsius() - other.to_celsius()) < self.TOLERANCE
+
+    def __lt__(self, other: object) -> bool:
+        """Check for less than."""
+        if not isinstance(other, Temperature):
+            return NotImplemented
+
+        return self.to_celsius() < other.to_celsius() and not self == other
+
+    @classmethod
+    def _process_unit(cls, unit: str) -> str:
+        """Return the unit in uppercase, or raise ValueError if it is not accepted."""
+        processed_unit = unit.upper()
+
+        if processed_unit not in cls.ACCEPTED_UNITS:
+            raise ValueError(f"Unit must be K, C, or F, got {unit!r}.")
+
+        return processed_unit
