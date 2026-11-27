@@ -39,7 +39,7 @@ class Temperature:
 
     def __repr__(self) -> str:
          '''Representation of class.'''
-         return f"Temperature({self._temp!r}, {self._unit!r})"
+         return f"Temperature({self._temp}, {self._unit})"
 
     def __str__(self) -> str:
          '''Prints Temperature in a human readable way.'''
