@@ -1,6 +1,6 @@
 import pytest
 
-from fraction import Fraction
+from fractions import Fraction
 
 # Initialization
 def test_negative_denominator():
